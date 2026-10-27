@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Night Shift · After-hours receptionist for HVAC and restoration companies</title>
+<meta name="description" content="Every after-hours call answered in your company's name, live on your existing number in 48 hours. The first 14 nights are free.">
+<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="funnel.css">
+<script src="config.js"></script>
+<script src="pixel.js"></script>
+</head>
+<body>
+<main class="page">
+  <section class="card">
+    <span class="pill">For HVAC and restoration company owners</span>
+    <h1>Every After-Hours Call Answered In Your Company's Name, Live In 48 Hours</h1>
+    <p class="offer">The First 14 Nights Are Free</p>
+    <p class="what">A done-for-you receptionist on your existing phone number. It books the visit, puts real emergencies through to your on-call tech, and emails you every call.</p>
+    <p class="nos">No new phone system. No setup fee for our first five companies. No long-term contract.</p>
+    <a class="cta" href="#book" data-cta>Book Your 15-Minute Call <span aria-hidden="true">→</span></a>
+    <p class="under">Want to hear it first? <a href="#hear">Talk to a sample receptionist</a>.</p>
+  </section>
+
+  <section class="block" id="book">
+    <div class="block-head"><h2>Pick a time for your call</h2><p>15 minutes on Google Meet. Times are shown in your own time zone.</p></div>
+    <div class="cal"><iframe data-cal title="Book a call" loading="lazy"></iframe></div>
+  </section>
+
+  <section class="block" id="hear">
+    <div class="block-head">
+      <h2>Hear it answer a call at 1 am</h2>
+      <p>This is a sample company. Call it from your browser and talk the way your customers do. Yours is built from your own website and answers as your company.</p>
+      <div class="switch" role="group" aria-label="Sample company"><button type="button" data-pick="summit" aria-pressed="true">Restoration</button><button type="button" data-pick="northgate" aria-pressed="false">HVAC</button></div>
+    </div>
+    <div id="line"></div>
+  </section>
+</main>
+<footer class="foot">Night Shift · Calls on the sample line are recorded so we can improve the receptionist.</footer>
+<script type="module">
+import { mountLine } from "./line.js";
+import { SAMPLES } from "./samples.js";
+document.querySelector("[data-cal]").src = window.NS.calendarEmbed;
+const PROMPTS = {
+  summit: ["Water is coming through my kitchen ceiling.", "Do you work with my insurance company?", "Can someone come out tomorrow to look at mold?"],
+  northgate: ["My furnace stopped and it's freezing in here.", "What do you charge to come out?", "Can I book a tune-up for next week?"],
+};
+function show(key) {
+  const D = SAMPLES[key];
+  document.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pick === key)));
+  const root = document.getElementById("line"); const fresh = root.cloneNode(false); root.replaceWith(fresh);
+  mountLine(fresh, { agentId: D.agentId, vars: D.vars, company: D.name, meta: [D.trade === "restoration" ? "Water, fire and mold" : "Heating and cooling", D.city].join(" · "), prompts: PROMPTS[key] });
+}
+document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => show(b.dataset.pick)));
+show("summit");
+document.querySelector("[data-cta]").addEventListener("click", () => window.fbq?.("track", "InitiateCheckout"));
+</script>
+</body>
+</html>

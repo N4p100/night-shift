@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Your call is scheduled · Night Shift</title>
+<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="funnel.css">
+<script src="config.js"></script>
+<script src="pixel.js"></script>
+</head>
+<body>
+<main class="page">
+  <section class="card">
+    <span class="check" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h1>Your Night Shift Call Is <em>Scheduled</em></h1>
+    <p class="what">The calendar invite with the Google Meet link is in your email. Two short steps before we speak help us use the 15 minutes well.</p>
+  </section>
+
+  <section class="block">
+    <div class="step"><span class="pill">Step 1</span><h2 style="font-size:clamp(28px,4vw,44px);font-weight:620">Try the receptionist before our call</h2>
+      <p class="muted" style="max-width:56ch">Call this sample company from your browser. Ask a price, book a visit, or say it's an emergency. Before our call we build one for your company from your website and email you the link.</p>
+      <div class="switch" role="group" aria-label="Sample company"><button type="button" data-pick="summit" aria-pressed="true">Restoration</button><button type="button" data-pick="northgate" aria-pressed="false">HVAC</button></div>
+    </div>
+    <div id="line"></div>
+  </section>
+
+  <section class="block">
+    <div class="step"><span class="pill">Step 2</span><h2 style="font-size:clamp(28px,4vw,44px);font-weight:620">Have these three answers ready</h2></div>
+    <ol class="qs">
+      <li><b>01</b><span>What happens to a call that comes in at 9 pm today?</span></li>
+      <li><b>02</b><span>Roughly how many calls come in after hours in a normal week?</span></li>
+      <li><b>03</b><span>Who is on call, and how should they be reached for a real emergency?</span></li>
+    </ol>
+  </section>
+</main>
+<footer class="foot">Night Shift · Calls on the sample line are recorded so we can improve the receptionist.</footer>
+<script type="module">
+import { mountLine } from "./line.js";
+import { SAMPLES } from "./samples.js";
+const PROMPTS = {
+  summit: ["Water is coming through my kitchen ceiling.", "Do you work with my insurance company?", "Can someone come out tomorrow to look at mold?"],
+  northgate: ["My furnace stopped and it's freezing in here.", "What do you charge to come out?", "Can I book a tune-up for next week?"],
+};
+function show(key) {
+  const D = SAMPLES[key];
+  document.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pick === key)));
+  const root = document.getElementById("line"); const fresh = root.cloneNode(false); root.replaceWith(fresh);
+  mountLine(fresh, { agentId: D.agentId, vars: D.vars, company: D.name, meta: [D.trade === "restoration" ? "Water, fire and mold" : "Heating and cooling", D.city].join(" · "), prompts: PROMPTS[key] });
+}
+document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => show(b.dataset.pick)));
+show("summit");
+window.fbq?.("track", "Schedule");
+</script>
+</body>
+</html>
